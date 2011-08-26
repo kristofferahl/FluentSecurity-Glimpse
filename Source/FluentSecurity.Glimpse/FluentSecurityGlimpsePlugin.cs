@@ -31,7 +31,7 @@ namespace FluentSecurity.Glimpse
 					{
 						policyContainer.ControllerName,
 						policyContainer.ActionName,
-						policyContainer.GetPolicies().Select(x => x.GetType().Name.Replace("Policy", String.Empty)).ToArray()
+						policyContainer.GetPolicies().Select(x => x.GetType().Name.Replace("Policy", String.Empty)).OrderBy(name => name).ToArray()
 					});
 			}
 

@@ -13,6 +13,43 @@ namespace FluentSecurity.Glimpse
 		{
 			var data = new List<object[]> { new[] { "Controller", "Action", "Policies" } };
 
+			var configuration = GetSecurityConfiguration();
+			if (configuration != null)
+			{
+				var sortedPolicyContainers = configuration.PolicyContainers.OrderBy(x => x.ActionName).OrderBy(x => x.ControllerName);
+				foreach (var policyContainer in sortedPolicyContainers)
+				{
+					var policyRows = new List<object[]> { new object[] { "Policy", "Type" } };
+					var securityPolicies = policyContainer.GetPolicies().OrderBy(x => x.GetType().FullName).Select(x => x.GetType());
+					
+					AddPoliciesToPolicyRows(policyRows, securityPolicies);
+
+					data.Add(new object[]
+					{
+						policyContainer.ControllerName,
+						policyContainer.ActionName,
+						policyRows
+					});
+				}
+			}
+
+			return data;
+		}
+
+		private static void AddPoliciesToPolicyRows(List<object[]> policyRows, IEnumerable<Type> securityPolicies)
+		{
+			foreach (var securityPolicy in securityPolicies)
+			{
+				policyRows.Add(new object[]
+				{
+					securityPolicy.Name.Replace("Policy", String.Empty),
+					securityPolicy.FullName
+				});
+			}
+		}
+
+		private static ISecurityConfiguration GetSecurityConfiguration()
+		{
 			ISecurityConfiguration configuration;
 			try
 			{
@@ -22,20 +59,7 @@ namespace FluentSecurity.Glimpse
 			{
 				return null;
 			}
-			
-			if (configuration != null)
-			{
-				var sortedPolicyContainers = configuration.PolicyContainers.OrderBy(x => x.ActionName).OrderBy(x => x.ControllerName);
-				foreach (var policyContainer in sortedPolicyContainers)
-					data.Add(new object[]
-					{
-						policyContainer.ControllerName,
-						policyContainer.ActionName,
-						policyContainer.GetPolicies().Select(x => x.GetType().Name.Replace("Policy", String.Empty)).OrderBy(name => name).ToArray()
-					});
-			}
-
-			return data;
+			return configuration;
 		}
 
 		public void SetupInit() {}

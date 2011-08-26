@@ -2,10 +2,27 @@
 using System.Linq;
 using FluentSecurity.Glimpse.Specification.Controllers;
 using FluentSecurity.Glimpse.Specification.Policies;
+using FluentSecurity.Policy;
+using Glimpse.Core.Extensibility;
 using Machine.Specifications;
 
 namespace FluentSecurity.Glimpse.Specification
 {
+	public class When_getting_the_name_of_the_plugin
+	{
+		private static IGlimpsePlugin plugin;
+		private static object result;
+
+		Establish context = () =>
+			plugin = new FluentSecurityGlimpsePlugin();
+
+		Because of = () =>
+		   result = plugin.Name;
+
+		It should_be_Fluent_Security = () =>
+		  result.ShouldEqual("Fluent Security");
+	}
+
 	public class When_getting_data_before_configuring_fluent_security : ConfigurationSpec
 	{
 		Establish context = () =>
@@ -33,19 +50,19 @@ namespace FluentSecurity.Glimpse.Specification
 			GetHeaders().ElementAt(2).ShouldEqual("Policies");
 
 		It should_have_row_for_admin_index_with_policy_DenyAnonymousAccess = () =>
-			GetRows().ElementAt(0).VerifyRow("AdminController", "Index", "DenyAnonymousAccess");
+			GetRows().ElementAt(0).VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_admin_systemmonitor_with_policy_DenyAnonymousAccess_and_LocalHostOnly = () =>
-			GetRows().ElementAt(1).VerifyRow("AdminController", "SystemMonitor", "DenyAnonymousAccess", "LocalHostOnly");
+			GetRows().ElementAt(1).VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
 
 		It should_have_row_for_authentication_login_with_policy_DenyAuthenticatedAccess = () =>
-			GetRows().ElementAt(2).VerifyRow("AuthenticationController", "LogIn", "DenyAuthenticatedAccess");
+			GetRows().ElementAt(2).VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
 
 		It should_have_row_for_authentication_logout_with_policy_DenyAnonymousAccess = () =>
-			GetRows().ElementAt(3).VerifyRow("AuthenticationController", "LogOut", "DenyAnonymousAccess");
+			GetRows().ElementAt(3).VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_home_index_with_policy_Ignore = () =>
-			GetRows().ElementAt(4).VerifyRow("HomeController", "Index", "Ignore");
+			GetRows().ElementAt(4).VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
 	}
 
 	public abstract class ConfigurationSpec

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>FluentSecurity.Glimpse</id>
+		<version>1.0</version>
+		<authors>Kristoffer Ahl</authors>
+		<owners>Kristoffer Ahl</owners>
+		<licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+		<projectUrl>https://github.com/kristofferahl/FluentSecurity-Glimpse</projectUrl>
+		<iconUrl>https://github.com/kristofferahl/FluentSecurity/raw/master/Documents/Fluent-Security-Logo-32x32.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Glimpse plugin for Fluent Security.</description>
+		<tags>asp.net mvc .net40 security debugging diagnostics</tags>
+		<dependencies>
+			<dependency id="FluentSecurity" version="1.0" />
+			<dependency id="Glimpse" version="0.85" />
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="Output\FluentSecurity.Glimpse.dll" target="lib\FluentSecurity.Glimpse.dll" />
+	</files>
+</package>

@@ -11,11 +11,13 @@ namespace FluentSecurity.Glimpse
 	{
 		public object GetData(HttpContextBase context)
 		{
-			var data = new List<object[]> { new[] { "Controller", "Action", "Policies" } };
-
 			var configuration = GetSecurityConfiguration();
 			if (configuration != null)
 			{
+				var data = new List<object[]>();
+				
+				data.Add(new[] { "Controller", "Action", "Policies" });
+				
 				var sortedPolicyContainers = configuration.PolicyContainers.OrderBy(x => x.ActionName).OrderBy(x => x.ControllerName);
 				foreach (var policyContainer in sortedPolicyContainers)
 				{
@@ -31,9 +33,11 @@ namespace FluentSecurity.Glimpse
 						policyRows
 					});
 				}
+
+				return data;
 			}
 
-			return data;
+			return null;
 		}
 
 		private static void AddPoliciesToPolicyRows(List<object[]> policyRows, IEnumerable<Type> securityPolicies)

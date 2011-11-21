@@ -41,28 +41,28 @@ namespace FluentSecurity.Glimpse.Specification
 		  result = plugin.GetData(null);
 
 		It should_have_header_for_controller = () =>
-			GetHeaders().ElementAt(0).ShouldEqual("Controller");
+			Rows[0].Columns[0].Data.ShouldEqual("Controller");
 
 		It should_have_header_for_action = () =>
-			GetHeaders().ElementAt(1).ShouldEqual("Action");
+			Rows[0].Columns[1].Data.ShouldEqual("Action");
 
 		It should_have_header_for_policies = () =>
-			GetHeaders().ElementAt(2).ShouldEqual("Policies");
+			Rows[0].Columns[2].Data.ShouldEqual("Policies");
 
 		It should_have_row_for_admin_index_with_policy_DenyAnonymousAccess = () =>
-			GetRows().ElementAt(0).VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
+			Rows[1].VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_admin_systemmonitor_with_policy_DenyAnonymousAccess_and_LocalHostOnly = () =>
-			GetRows().ElementAt(1).VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
+			Rows[2].VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
 
 		It should_have_row_for_authentication_login_with_policy_DenyAuthenticatedAccess = () =>
-			GetRows().ElementAt(2).VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
+			Rows[3].VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
 
 		It should_have_row_for_authentication_logout_with_policy_DenyAnonymousAccess = () =>
-			GetRows().ElementAt(3).VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
+			Rows[4].VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_home_index_with_policy_Ignore = () =>
-			GetRows().ElementAt(4).VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
+			Rows[5].VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
 	}
 
 	public abstract class ConfigurationSpec
@@ -86,14 +86,13 @@ namespace FluentSecurity.Glimpse.Specification
 			plugin = new FluentSecurityGlimpsePlugin();
 		}
 
-		protected static object[] GetHeaders()
+		protected static List<GlimpseRow> Rows
 		{
-			return ((List<object[]>)result).First();
-		}
-
-		protected static IEnumerable<object[]> GetRows()
-		{
-			return ((List<object[]>)result).Skip(1);
+			get
+			{
+				var root = (GlimpseRoot.Instance) result;
+				return root.Data.Rows;
+			}
 		}
 	}
 }

@@ -14,41 +14,44 @@ namespace FluentSecurity.Glimpse
 			var configuration = GetSecurityConfiguration();
 			if (configuration != null)
 			{
-				var data = new List<object[]>();
+				//var topLevel = new GlimpseRoot();
+				//topLevel.AddRow().Column("Key").Column("Value");
+
+				//topLevel.AddRow().Column("*Ignore missing configuration*").Column(configuration.IgnoreMissingConfiguration);
 				
-				data.Add(new[] { "Controller", "Action", "Policies" });
-				
+				var root = new GlimpseRoot();
+				root.AddRow().Column("Controller").Column("Action").Column("Policies");
+
 				var sortedPolicyContainers = configuration.PolicyContainers.OrderBy(x => x.ActionName).OrderBy(x => x.ControllerName);
 				foreach (var policyContainer in sortedPolicyContainers)
 				{
-					var policyRows = new List<object[]> { new object[] { "Policy", "Type" } };
+					var policyRows = new GlimpseRoot();
+					policyRows.AddRow().Column("Policy").Column("Type");
+
 					var securityPolicies = policyContainer.GetPolicies().OrderBy(x => x.GetType().FullName).Select(x => x.GetType());
-					
 					AddPoliciesToPolicyRows(policyRows, securityPolicies);
 
-					data.Add(new object[]
-					{
-						policyContainer.ControllerName,
-						policyContainer.ActionName,
-						policyRows
-					});
+					root.AddRow()
+						.Column(policyContainer.ControllerName)
+						.Column(policyContainer.ActionName)
+						.Column(policyRows.Build());
 				}
 
-				return data;
+				//topLevel.AddRow().Column("*Policies*").Column(root.Build());
+
+				return root.Build();
 			}
 
 			return null;
 		}
 
-		private static void AddPoliciesToPolicyRows(List<object[]> policyRows, IEnumerable<Type> securityPolicies)
+		private static void AddPoliciesToPolicyRows(GlimpseRoot policyRows, IEnumerable<Type> securityPolicies)
 		{
 			foreach (var securityPolicy in securityPolicies)
 			{
-				policyRows.Add(new object[]
-				{
-					securityPolicy.Name.Replace("Policy", String.Empty),
-					securityPolicy.FullName
-				});
+				policyRows.AddRow()
+					.Column(securityPolicy.Name.Replace("Policy", String.Empty))
+					.Column(securityPolicy.FullName);
 			}
 		}
 

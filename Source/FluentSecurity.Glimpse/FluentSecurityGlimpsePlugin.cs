@@ -17,13 +17,10 @@ namespace FluentSecurity.Glimpse
 			if (configuration != null)
 			{
 				// TODO: See below...
-				// * Current version of the loaded Fluent Security assembly
 				// * Link to documentation
-				// * Current version of Fluent Security (Link to NuGet)
-				// * Ignore missing configuration
-				// * Service locator specified
+				// * Link to NuGet
+				// * Link to website
 				// * Current configuration events (what was the path that led to the current configurtion)
-				// * Current configuration (policies)
 				// * Request details (what did Fluent Security do during the most recent request)
 				//		- What was the controller and action that was called
 				//		- How many policies was in the container that matched that controller action

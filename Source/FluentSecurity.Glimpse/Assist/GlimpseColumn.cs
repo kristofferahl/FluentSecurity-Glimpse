@@ -6,7 +6,10 @@ namespace FluentSecurity.Glimpse.Assist
 
 		public GlimpseColumn(object o)
 		{
-			Data = o;
+			if (o is GlimpseSection)
+				Data = o.AsGlimpseSection().Build();
+			else
+				Data = o;
 		}
 
 		internal void OverrideData(object data)

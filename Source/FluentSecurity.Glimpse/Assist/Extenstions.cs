@@ -6,11 +6,15 @@ namespace FluentSecurity.Glimpse.Assist
 	{
 		public static GlimpseSection AsGlimpseSection(this object o)
 		{
-			var instance = o as GlimpseSection.Instance;
-			if (instance == null)
-				throw new InvalidCastException(String.Format("The object is not a glimpse root. Object is of tyoe {0}.", o.GetType()));
+			var section = o as GlimpseSection;
+			if (section != null)
+				return section;
 
-			return instance.Data;
+			var instance = o as GlimpseSection.Instance;
+			if (instance != null)
+				return instance.Data;
+			
+			throw new InvalidCastException(String.Format("The object is not a glimpse root. Object is of type {0}.", o.GetType()));
 		}
 	}
 }

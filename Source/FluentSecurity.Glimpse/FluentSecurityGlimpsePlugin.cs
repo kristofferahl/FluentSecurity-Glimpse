@@ -45,19 +45,19 @@ namespace FluentSecurity.Glimpse
 				var infoSection = CreateInfoSection(configuration);
 				glimpseRoot.AddRow()
 					.Column("Fluent Security").Bold()
-					.Column(infoSection.Build());
+					.Column(infoSection);
 
 				// CONFIGURATION
 				var configurationSection = CreateConfigurationSection(configuration);
 				glimpseRoot.AddRow()
 					.Column("Configuration").Bold()
-					.Column(configurationSection.Build());
+					.Column(configurationSection);
 				
 				// POLICIES
 				var policiesSection = CreatePoliciesSection(configuration);
 				glimpseRoot.AddRow()
 					.Column("Policies").Bold()
-					.Column(policiesSection.Build());
+					.Column(policiesSection);
 
 				return glimpseRoot.Build();
 			}
@@ -146,7 +146,7 @@ namespace FluentSecurity.Glimpse
 				section.AddRow()
 					.Column(policyContainer.ControllerName)
 					.Column(policyContainer.ActionName)
-					.Column(policySectionData.Build());
+					.Column(policySectionData);
 			}
 			return section;
 		}

@@ -50,9 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extenstions.cs" />
     <Compile Include="FluentSecurityGlimpsePlugin.cs" />
+    <Compile Include="FormattingExtensions.cs" />
     <Compile Include="GlimpseColumn.cs" />
-    <Compile Include="GlimpseRoot.cs" />
+    <Compile Include="GlimpseSection.cs" />
     <Compile Include="GlimpseRow.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
   </ItemGroup>

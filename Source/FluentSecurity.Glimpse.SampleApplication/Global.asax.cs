@@ -46,6 +46,8 @@ namespace FluentSecurity.Glimpse.SampleApplication
 			{
 				configuration.GetAuthenticationStatusFrom(() => true);
 
+				configuration.IgnoreMissingConfiguration();
+
 				configuration.For<HomeController>(x => x.Index()).RequireRole("One", "Two");
 				configuration.For<HomeController>(x => x.About()).RequireAllRoles("One", "Two");
 			});

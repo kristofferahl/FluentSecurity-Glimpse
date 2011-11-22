@@ -35,34 +35,106 @@ namespace FluentSecurity.Glimpse.Specification
 		  result.ShouldBeNull();
 	}
 
-	public class When_getting_data_after_configuring_fluent_security : ConfigurationSpec
+	public class When_displaying_basic_information_after_configuring_fluent_security : ConfigurationSpec
 	{
 		Because of = () =>
 		  result = plugin.GetData(null);
 
+		It should_have_headers_key_and_value = () =>
+		{
+			MainHeader().Columns[0].Data.ShouldEqual("Section");
+			MainHeader().Columns[1].Data.ShouldEqual("Content");
+		};
+
+		It should_have_loaded_version_of_fluent_security = () =>
+		{
+			Section(Sections.FluentSecurity).Columns[0].Data.ShouldEqual("*Fluent Security*");
+			
+			FluentSecuritySection().Rows[0].Columns[0].Data.ShouldEqual("Key");
+			FluentSecuritySection().Rows[0].Columns[1].Data.ShouldEqual("Value");
+		};
+
+		private static GlimpseSection FluentSecuritySection()
+		{
+			return Section(Sections.FluentSecurity).Columns[1].Data.AsGlimpseSection();
+		}
+	}
+
+	public class When_displaying_configuration_info_after_configuring_fluent_security : ConfigurationSpec
+	{
+		Because of = () =>
+		  result = plugin.GetData(null);
+
+		It should_have_configuration_as_heading = () =>
+			Section(Sections.Configuration).Columns[0].Data.ShouldEqual("*Configuration*");
+
+		It should_have_headers_key_and_value = () =>
+		{
+			ConfigurationSection().Rows[0].Columns[0].Data.ShouldEqual("Key");
+			ConfigurationSection().Rows[0].Columns[1].Data.ShouldEqual("Value");
+		};
+
+		It should_have_ignore_missing_configuration_info = () =>
+		{
+			ConfigurationSection().Rows[1].Columns[0].Data.ShouldEqual("Ignore missing configuration");
+			ConfigurationSection().Rows[1].Columns[1].Data.ShouldEqual("Yes");
+		};
+
+		It should_have_service_locator_info = () =>
+		{
+			ConfigurationSection().Rows[2].Columns[0].Data.ShouldEqual("Service locator");
+			ConfigurationSection().Rows[2].Columns[1].Data.ShouldEqual("Service locator has been configued");
+		};
+
+		private static GlimpseSection ConfigurationSection()
+		{
+			return Section(Sections.Configuration).Columns[1].Data.AsGlimpseSection();
+		}
+	}
+
+	public class When_displaying_policies_data_after_configuring_fluent_security : ConfigurationSpec
+	{
+		Because of = () =>
+		  result = plugin.GetData(null);
+
+		It should_have_heading_for_policies = () =>
+			Section(Sections.Policies).Columns[0].Data.ShouldEqual("*Policies*");
+
 		It should_have_header_for_controller = () =>
-			Rows[0].Columns[0].Data.ShouldEqual("Controller");
+			PolicySectionData().Rows[0].Columns[0].Data.ShouldEqual("Controller");
 
 		It should_have_header_for_action = () =>
-			Rows[0].Columns[1].Data.ShouldEqual("Action");
+			PolicySectionData().Rows[0].Columns[1].Data.ShouldEqual("Action");
 
 		It should_have_header_for_policies = () =>
-			Rows[0].Columns[2].Data.ShouldEqual("Policies");
+			PolicySectionData().Rows[0].Columns[2].Data.ShouldEqual("Policies");
 
 		It should_have_row_for_admin_index_with_policy_DenyAnonymousAccess = () =>
-			Rows[1].VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
+			PolicySectionData().Rows[1].VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_admin_systemmonitor_with_policy_DenyAnonymousAccess_and_LocalHostOnly = () =>
-			Rows[2].VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
+			PolicySectionData().Rows[2].VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
 
 		It should_have_row_for_authentication_login_with_policy_DenyAuthenticatedAccess = () =>
-			Rows[3].VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
+			PolicySectionData().Rows[3].VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
 
 		It should_have_row_for_authentication_logout_with_policy_DenyAnonymousAccess = () =>
-			Rows[4].VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
+			PolicySectionData().Rows[4].VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_home_index_with_policy_Ignore = () =>
-			Rows[5].VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
+			PolicySectionData().Rows[5].VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
+
+		private static GlimpseSection PolicySectionData()
+		{
+			return Section(Sections.Policies).Columns[1].Data.AsGlimpseSection();
+		}
+	}
+
+	public static class Sections
+	{
+		public static int FluentSecurity = 1;
+		public static int Configuration = 2;
+		public static int Policies = 3;
 	}
 
 	public abstract class ConfigurationSpec
@@ -75,6 +147,10 @@ namespace FluentSecurity.Glimpse.Specification
 			SecurityConfigurator.Configure(configuration =>
 			{
 				configuration.GetAuthenticationStatusFrom(() => true);
+
+				configuration.IgnoreMissingConfiguration();
+				
+				configuration.ResolveServicesUsing(t => new List<object>());
 
 				configuration.For<AdminController>().DenyAnonymousAccess();
 				configuration.For<AdminController>(x => x.SystemMonitor()).AddPolicy(new LocalHostOnlyPolicy());
@@ -90,9 +166,19 @@ namespace FluentSecurity.Glimpse.Specification
 		{
 			get
 			{
-				var root = (GlimpseRoot.Instance) result;
+				var root = (GlimpseSection.Instance) result;
 				return root.Data.Rows;
 			}
+		}
+
+		protected static GlimpseRow MainHeader()
+		{
+			return Rows[0];
+		}
+
+		protected static GlimpseRow Section(int section)
+		{
+			return Rows[section];
 		}
 	}
 }

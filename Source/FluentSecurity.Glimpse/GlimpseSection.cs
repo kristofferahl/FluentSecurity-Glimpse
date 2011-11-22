@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace FluentSecurity.Glimpse
 {
-	public class GlimpseRoot
+	public class GlimpseSection
 	{
 		public readonly List<GlimpseRow> Rows = new List<GlimpseRow>();
 
@@ -23,9 +23,9 @@ namespace FluentSecurity.Glimpse
 
 		public class Instance : List<object[]>
 		{
-			public GlimpseRoot Data { get; private set; }
+			public GlimpseSection Data { get; private set; }
 
-			public Instance(GlimpseRoot instance)
+			public Instance(GlimpseSection instance)
 			{
 				Data = instance;
 			}

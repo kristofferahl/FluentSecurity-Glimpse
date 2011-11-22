@@ -8,5 +8,10 @@ namespace FluentSecurity.Glimpse
 		{
 			Data = o;
 		}
+
+		internal void OverrideData(object data)
+		{
+			Data = data;
+		}
 	}
 }

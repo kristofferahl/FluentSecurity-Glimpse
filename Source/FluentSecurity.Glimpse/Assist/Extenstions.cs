@@ -1,6 +1,6 @@
 using System;
 
-namespace FluentSecurity.Glimpse
+namespace FluentSecurity.Glimpse.Assist
 {
 	public static class Extenstions
 	{

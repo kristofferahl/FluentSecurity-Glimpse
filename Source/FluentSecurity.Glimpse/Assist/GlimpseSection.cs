@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FluentSecurity.Glimpse
+namespace FluentSecurity.Glimpse.Assist
 {
 	public class GlimpseSection
 	{

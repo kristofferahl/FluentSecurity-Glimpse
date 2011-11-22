@@ -1,4 +1,4 @@
-namespace FluentSecurity.Glimpse
+namespace FluentSecurity.Glimpse.Assist
 {
 	public class GlimpseColumn
 	{

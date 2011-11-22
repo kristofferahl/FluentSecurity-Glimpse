@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentSecurity.Glimpse.Assist;
 using Machine.Specifications;
 
 namespace FluentSecurity.Glimpse.Specification

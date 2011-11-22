@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace FluentSecurity.Glimpse
+namespace FluentSecurity.Glimpse.Assist
 {
 	public static class FormattingExtensions
 	{

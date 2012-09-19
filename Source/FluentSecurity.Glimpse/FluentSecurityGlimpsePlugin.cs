@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 using Glimpse.AspNet.Extensibility;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Plugin.Assist;
@@ -34,9 +31,9 @@ namespace FluentSecurity.Glimpse
 				//		- How long did it take to execute that violation handler
 				//		- ...
 
-				var infoSection = CreateInfoSection(configuration);
-				var configurationSection = CreateConfigurationSection(configuration);
-				var policiesSection = CreatePoliciesSection(configuration);
+				var infoSection = InfoSection.Create(configuration);
+				var configurationSection = ConfigurationSection.Create(configuration);
+				var policiesSection = PoliciesSection.Create(configuration);
 
 				var plugin = Plugin.Create("Section", "Content")
 					.Section("Fluent Security", infoSection)
@@ -49,96 +46,9 @@ namespace FluentSecurity.Glimpse
 			return null;
 		}
 
-		private static TabSection CreateInfoSection(ISecurityConfiguration configuration)
+		public override string Name
 		{
-			var section = new TabSection("Key", "Value");
-
-			var availableVersion = TryGetVersionFromGithub();
-			section.AddRow()
-				.Column("Latest version of Fluent Security").Strong()
-				.Column(availableVersion).Strong()
-				.Selected();
-			
-			var loadedVersion = configuration.GetType().Assembly.FullName;
-			section.AddRow().Column("Loaded assembly").Column(loadedVersion);
-
-			return section;
-		}
-
-		private static string TryGetVersionFromGithub()
-		{
-			try
-			{
-				var xml = XDocument.Load("https://raw.github.com/kristofferahl/FluentSecurity/master/Build/Scripts/Build.build");
-				var root = xml.Root;
-				if (root != null)
-				{
-					var properties = root.Elements().Where(e => e.Name.LocalName == "property" && e.HasAttributes).ToList();
-					if (properties.Any())
-					{
-						var versionProperty = properties.SingleOrDefault(p => p.FirstAttribute.Value == "project.version.label");
-						if (versionProperty != null)
-						{
-							var versionAttribute = versionProperty.Attribute("value");
-							if (versionAttribute != null)
-								return String.Format("Fluent Security v. {0}", versionAttribute.Value);
-						}
-					}
-				}
-			}
-			catch { }
-			return "Failed to find available version";
-		}
-
-		private static TabSection CreateConfigurationSection(ISecurityConfiguration configuration)
-		{
-			var section = new TabSection("Key", "Value");
-
-			var ignoreMissingConfiguration = configuration.IgnoreMissingConfiguration;
-			var missingConfigurationRow = section.AddRow().Column("Ignore missing configuration");
-
-			if (ignoreMissingConfiguration)
-				missingConfigurationRow.Column("Yes").Warn();
-			else
-				missingConfigurationRow.Column("No");
-
-			var serviceLocatorRow = section.AddRow().Column("Service locator");
-			serviceLocatorRow.Column(configuration.ExternalServiceLocator != null
-				? "Service locator has been configued"
-				: "Not configued"
-				);
-
-			return section;
-		}
-
-		private static TabSection CreatePoliciesSection(ISecurityConfiguration configuration)
-		{
-			var section = new TabSection("Controller", "Action", "Policies");
-
-			var sortedPolicyContainers = configuration.PolicyContainers.OrderBy(x => x.ActionName).OrderBy(x => x.ControllerName);
-			foreach (var policyContainer in sortedPolicyContainers)
-			{
-				var policySectionData = new TabSection("Policy", "Type");
-
-				var securityPolicies = policyContainer.GetPolicies().OrderBy(x => x.GetType().FullName).Select(x => x.GetType());
-				AddPoliciesToPolicySection(policySectionData, securityPolicies);
-
-				section.AddRow()
-					.Column(policyContainer.ControllerName)
-					.Column(policyContainer.ActionName)
-					.Column(policySectionData);
-			}
-			return section;
-		}
-
-		private static void AddPoliciesToPolicySection(TabSection policyRows, IEnumerable<Type> securityPolicies)
-		{
-			foreach (var securityPolicy in securityPolicies)
-			{
-				policyRows.AddRow()
-					.Column(securityPolicy.Name.Replace("Policy", String.Empty))
-					.Column(securityPolicy.FullName);
-			}
+			get { return "Fluent Security"; }
 		}
 
 		private static ISecurityConfiguration GetSecurityConfiguration()
@@ -153,11 +63,6 @@ namespace FluentSecurity.Glimpse
 				return null;
 			}
 			return configuration;
-		}
-
-		public override string Name
-		{
-			get { return "Fluent Security"; }
 		}
 	}
 }

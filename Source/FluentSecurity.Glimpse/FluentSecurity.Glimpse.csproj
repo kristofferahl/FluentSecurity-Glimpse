@@ -53,7 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationSection.cs" />
     <Compile Include="FluentSecurityGlimpsePlugin.cs" />
+    <Compile Include="InfoSection.cs" />
+    <Compile Include="PoliciesSection.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

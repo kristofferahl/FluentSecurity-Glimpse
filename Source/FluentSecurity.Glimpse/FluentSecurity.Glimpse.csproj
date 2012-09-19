@@ -53,16 +53,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assist\Extenstions.cs" />
     <Compile Include="FluentSecurityGlimpsePlugin.cs" />
-    <Compile Include="Assist\FormattingExtensions.cs" />
-    <Compile Include="Assist\GlimpseColumn.cs" />
-    <Compile Include="Assist\GlimpseSection.cs" />
-    <Compile Include="Assist\GlimpseRow.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

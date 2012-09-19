@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FluentSecurity.Glimpse.Assist;
 using FluentSecurity.Glimpse.Specification.Controllers;
 using FluentSecurity.Glimpse.Specification.Policies;
 using FluentSecurity.Policy;
 using Glimpse.Core.Extensibility;
+using Glimpse.Core.Plugin.Assist;
 using Machine.Specifications;
 
 namespace FluentSecurity.Glimpse.Specification
 {
 	public class When_getting_the_name_of_the_plugin
 	{
-		private static IGlimpsePlugin plugin;
+		private static ITab plugin;
 		private static object result;
 
 		Establish context = () =>
@@ -43,21 +43,21 @@ namespace FluentSecurity.Glimpse.Specification
 
 		It should_have_headers_key_and_value = () =>
 		{
-			MainHeader().Columns[0].Data.ShouldEqual("Section");
-			MainHeader().Columns[1].Data.ShouldEqual("Content");
+			MainHeader().Columns.ElementAt(0).Data.ShouldEqual("Section");
+			MainHeader().Columns.ElementAt(1).Data.ShouldEqual("Content");
 		};
 
 		It should_have_loaded_version_of_fluent_security = () =>
 		{
-			Section(Sections.FluentSecurity).Columns[0].Data.ShouldEqual("*Fluent Security*");
+			Section(Sections.FluentSecurity).Columns.ElementAt(0).Data.ShouldEqual("*Fluent Security*");
 			
-			FluentSecuritySection().Rows[0].Columns[0].Data.ShouldEqual("Key");
-			FluentSecuritySection().Rows[0].Columns[1].Data.ShouldEqual("Value");
+			FluentSecuritySection().Rows.ElementAt(0).Columns.ElementAt(0).Data.ShouldEqual("Key");
+			FluentSecuritySection().Rows.ElementAt(0).Columns.ElementAt(1).Data.ShouldEqual("Value");
 		};
 
-		private static GlimpseSection FluentSecuritySection()
+		private static TabSection FluentSecuritySection()
 		{
-			return Section(Sections.FluentSecurity).Columns[1].Data.AsGlimpseSection();
+			return Section(Sections.FluentSecurity).Columns.ElementAt(1).Data.ToTabSection();
 		}
 	}
 
@@ -67,29 +67,29 @@ namespace FluentSecurity.Glimpse.Specification
 		  result = plugin.GetData(null);
 
 		It should_have_configuration_as_heading = () =>
-			Section(Sections.Configuration).Columns[0].Data.ShouldEqual("*Configuration*");
+			Section(Sections.Configuration).Columns.ElementAt(0).Data.ShouldEqual("*Configuration*");
 
 		It should_have_headers_key_and_value = () =>
 		{
-			ConfigurationSection().Rows[0].Columns[0].Data.ShouldEqual("Key");
-			ConfigurationSection().Rows[0].Columns[1].Data.ShouldEqual("Value");
+			ConfigurationSection().Rows.ElementAt(0).Columns.ElementAt(0).Data.ShouldEqual("Key");
+			ConfigurationSection().Rows.ElementAt(0).Columns.ElementAt(1).Data.ShouldEqual("Value");
 		};
 
 		It should_have_ignore_missing_configuration_info = () =>
 		{
-			ConfigurationSection().Rows[1].Columns[0].Data.ShouldEqual("Ignore missing configuration");
-			ConfigurationSection().Rows[1].Columns[1].Data.ShouldEqual("Yes");
+			ConfigurationSection().Rows.ElementAt(1).Columns.ElementAt(0).Data.ShouldEqual("Ignore missing configuration");
+			ConfigurationSection().Rows.ElementAt(1).Columns.ElementAt(1).Data.ShouldEqual("Yes");
 		};
 
 		It should_have_service_locator_info = () =>
 		{
-			ConfigurationSection().Rows[2].Columns[0].Data.ShouldEqual("Service locator");
-			ConfigurationSection().Rows[2].Columns[1].Data.ShouldEqual("Service locator has been configued");
+			ConfigurationSection().Rows.ElementAt(2).Columns.ElementAt(0).Data.ShouldEqual("Service locator");
+			ConfigurationSection().Rows.ElementAt(2).Columns.ElementAt(1).Data.ShouldEqual("Service locator has been configued");
 		};
 
-		private static GlimpseSection ConfigurationSection()
+		private static TabSection ConfigurationSection()
 		{
-			return Section(Sections.Configuration).Columns[1].Data.AsGlimpseSection();
+			return Section(Sections.Configuration).Columns.ElementAt(1).Data.ToTabSection();
 		}
 	}
 
@@ -99,35 +99,35 @@ namespace FluentSecurity.Glimpse.Specification
 		  result = plugin.GetData(null);
 
 		It should_have_heading_for_policies = () =>
-			Section(Sections.Policies).Columns[0].Data.ShouldEqual("*Policies*");
+			Section(Sections.Policies).Columns.ElementAt(0).Data.ShouldEqual("*Policies*");
 
 		It should_have_header_for_controller = () =>
-			PolicySectionData().Rows[0].Columns[0].Data.ShouldEqual("Controller");
+			PolicySectionData().Rows.ElementAt(0).Columns.ElementAt(0).Data.ShouldEqual("Controller");
 
 		It should_have_header_for_action = () =>
-			PolicySectionData().Rows[0].Columns[1].Data.ShouldEqual("Action");
+			PolicySectionData().Rows.ElementAt(0).Columns.ElementAt(1).Data.ShouldEqual("Action");
 
 		It should_have_header_for_policies = () =>
-			PolicySectionData().Rows[0].Columns[2].Data.ShouldEqual("Policies");
+			PolicySectionData().Rows.ElementAt(0).Columns.ElementAt(2).Data.ShouldEqual("Policies");
 
 		It should_have_row_for_admin_index_with_policy_DenyAnonymousAccess = () =>
-			PolicySectionData().Rows[1].VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
+			PolicySectionData().Rows.ElementAt(1).VerifyRow("AdminController", "Index", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_admin_systemmonitor_with_policy_DenyAnonymousAccess_and_LocalHostOnly = () =>
-			PolicySectionData().Rows[2].VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
+			PolicySectionData().Rows.ElementAt(2).VerifyRow("AdminController", "SystemMonitor", typeof(DenyAnonymousAccessPolicy), typeof(LocalHostOnlyPolicy));
 
 		It should_have_row_for_authentication_login_with_policy_DenyAuthenticatedAccess = () =>
-			PolicySectionData().Rows[3].VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
+			PolicySectionData().Rows.ElementAt(3).VerifyRow("AuthenticationController", "LogIn", typeof(DenyAuthenticatedAccessPolicy));
 
 		It should_have_row_for_authentication_logout_with_policy_DenyAnonymousAccess = () =>
-			PolicySectionData().Rows[4].VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
+			PolicySectionData().Rows.ElementAt(4).VerifyRow("AuthenticationController", "LogOut", typeof(DenyAnonymousAccessPolicy));
 
 		It should_have_row_for_home_index_with_policy_Ignore = () =>
-			PolicySectionData().Rows[5].VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
+			PolicySectionData().Rows.ElementAt(5).VerifyRow("HomeController", "Index", typeof(IgnorePolicy));
 
-		private static GlimpseSection PolicySectionData()
+		private static TabSection PolicySectionData()
 		{
-			return Section(Sections.Policies).Columns[1].Data.AsGlimpseSection();
+			return Section(Sections.Policies).Columns.ElementAt(1).Data.ToTabSection();
 		}
 	}
 
@@ -163,23 +163,23 @@ namespace FluentSecurity.Glimpse.Specification
 			plugin = new FluentSecurityGlimpsePlugin();
 		}
 
-		protected static List<GlimpseRow> Rows
+		protected static IEnumerable<TabRow> Rows
 		{
 			get
 			{
-				var root = (GlimpseSection.Instance) result;
-				return root.Data.Rows;
+				var root = (TabSection) result;
+				return root.Rows;
 			}
 		}
 
-		protected static GlimpseRow MainHeader()
+		protected static TabRow MainHeader()
 		{
-			return Rows[0];
+			return Rows.ElementAt(0);
 		}
 
-		protected static GlimpseRow Section(int section)
+		protected static TabRow Section(int section)
 		{
-			return Rows[section];
+			return Rows.ElementAt(section);
 		}
 	}
 }

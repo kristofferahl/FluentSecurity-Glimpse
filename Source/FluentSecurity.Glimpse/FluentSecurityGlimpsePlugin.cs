@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Xml.Linq;
-using FluentSecurity.Glimpse.Assist;
+using Glimpse.AspNet.Extensibility;
 using Glimpse.Core.Extensibility;
+using Glimpse.Core.Plugin.Assist;
 
 namespace FluentSecurity.Glimpse
 {
-	[GlimpsePlugin]
-	public class FluentSecurityGlimpsePlugin : IGlimpsePlugin
+	public class FluentSecurityGlimpsePlugin : AspNetTab
 	{
-		public object GetData(HttpContextBase context)
+		public override object GetData(ITabContext context)
 		{
 			var configuration = GetSecurityConfiguration();
 			if (configuration != null)
@@ -35,42 +34,29 @@ namespace FluentSecurity.Glimpse
 				//		- How long did it take to execute that violation handler
 				//		- ...
 
-				var glimpseRoot = new GlimpseSection();
-				glimpseRoot.AddRow().Column("Section").Column("Content");
-
-				// GENERAL INFO
 				var infoSection = CreateInfoSection(configuration);
-				glimpseRoot.AddRow()
-					.Column("Fluent Security").Bold()
-					.Column(infoSection);
-
-				// CONFIGURATION
 				var configurationSection = CreateConfigurationSection(configuration);
-				glimpseRoot.AddRow()
-					.Column("Configuration").Bold()
-					.Column(configurationSection);
-				
-				// POLICIES
 				var policiesSection = CreatePoliciesSection(configuration);
-				glimpseRoot.AddRow()
-					.Column("Policies").Bold()
-					.Column(policiesSection);
 
-				return glimpseRoot.Build();
+				var plugin = Plugin.Create("Section", "Content")
+					.Section("Fluent Security", infoSection)
+					.Section("Configuration", configurationSection)
+					.Section("Policies", policiesSection);
+
+				return plugin;
 			}
 
 			return null;
 		}
 
-		private static GlimpseSection CreateInfoSection(ISecurityConfiguration configuration)
+		private static TabSection CreateInfoSection(ISecurityConfiguration configuration)
 		{
-			var section = new GlimpseSection();
-			section.AddRow().Column("Key").Column("Value");
+			var section = new TabSection("Key", "Value");
 
 			var availableVersion = TryGetVersionFromGithub();
 			section.AddRow()
-				.Column("Latest version of Fluent Security").Bold()
-				.Column(availableVersion).Bold()
+				.Column("Latest version of Fluent Security").Strong()
+				.Column(availableVersion).Strong()
 				.Selected();
 			
 			var loadedVersion = configuration.GetType().Assembly.FullName;
@@ -87,7 +73,7 @@ namespace FluentSecurity.Glimpse
 				var root = xml.Root;
 				if (root != null)
 				{
-					var properties = root.Elements().Where(e => e.Name.LocalName == "property" && e.HasAttributes);
+					var properties = root.Elements().Where(e => e.Name.LocalName == "property" && e.HasAttributes).ToList();
 					if (properties.Any())
 					{
 						var versionProperty = properties.SingleOrDefault(p => p.FirstAttribute.Value == "project.version.label");
@@ -104,10 +90,9 @@ namespace FluentSecurity.Glimpse
 			return "Failed to find available version";
 		}
 
-		private static GlimpseSection CreateConfigurationSection(ISecurityConfiguration configuration)
+		private static TabSection CreateConfigurationSection(ISecurityConfiguration configuration)
 		{
-			var section = new GlimpseSection();
-			section.AddRow().Column("Key").Column("Value");
+			var section = new TabSection("Key", "Value");
 
 			var ignoreMissingConfiguration = configuration.IgnoreMissingConfiguration;
 			var missingConfigurationRow = section.AddRow().Column("Ignore missing configuration");
@@ -126,16 +111,14 @@ namespace FluentSecurity.Glimpse
 			return section;
 		}
 
-		private static GlimpseSection CreatePoliciesSection(ISecurityConfiguration configuration)
+		private static TabSection CreatePoliciesSection(ISecurityConfiguration configuration)
 		{
-			var section = new GlimpseSection();
-			section.AddRow().Column("Controller").Column("Action").Column("Policies");
+			var section = new TabSection("Controller", "Action", "Policies");
 
 			var sortedPolicyContainers = configuration.PolicyContainers.OrderBy(x => x.ActionName).OrderBy(x => x.ControllerName);
 			foreach (var policyContainer in sortedPolicyContainers)
 			{
-				var policySectionData = new GlimpseSection();
-				policySectionData.AddRow().Column("Policy").Column("Type");
+				var policySectionData = new TabSection("Policy", "Type");
 
 				var securityPolicies = policyContainer.GetPolicies().OrderBy(x => x.GetType().FullName).Select(x => x.GetType());
 				AddPoliciesToPolicySection(policySectionData, securityPolicies);
@@ -148,7 +131,7 @@ namespace FluentSecurity.Glimpse
 			return section;
 		}
 
-		private static void AddPoliciesToPolicySection(GlimpseSection policyRows, IEnumerable<Type> securityPolicies)
+		private static void AddPoliciesToPolicySection(TabSection policyRows, IEnumerable<Type> securityPolicies)
 		{
 			foreach (var securityPolicy in securityPolicies)
 			{
@@ -172,9 +155,7 @@ namespace FluentSecurity.Glimpse
 			return configuration;
 		}
 
-		public void SetupInit() {}
-
-		public string Name
+		public override string Name
 		{
 			get { return "Fluent Security"; }
 		}

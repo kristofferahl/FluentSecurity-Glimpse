@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentSecurity.Glimpse.Assist;
+using Glimpse.Core.Plugin.Assist;
 using Machine.Specifications;
 
 namespace FluentSecurity.Glimpse.Specification
 {
 	public static class VerificationExtensions
 	{
-		public static void VerifyRow(this GlimpseRow row, string controller, string action, params Type[] expectedPolicies)
+		public static void VerifyRow(this TabRow row, string controller, string action, params Type[] expectedPolicies)
 		{
 			row.Columns.ElementAt(0).Data.ShouldEqual("FluentSecurity.Glimpse.Specification.Controllers." + controller);
 			row.Columns.ElementAt(1).Data.ShouldEqual(action);

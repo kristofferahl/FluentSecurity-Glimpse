@@ -18,7 +18,9 @@ namespace FluentSecurity.Glimpse
 				.Selected();
 
 			var loadedVersion = configuration.GetType().Assembly.FullName;
-			section.AddRow().Column("Loaded assembly").Column(loadedVersion);
+			section.AddRow()
+				.Column("Loaded assembly")
+				.Column(loadedVersion);
 
 			return section;
 		}

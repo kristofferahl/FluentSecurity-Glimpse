@@ -5,7 +5,7 @@ using Glimpse.Core.Plugin.Assist;
 
 namespace FluentSecurity.Glimpse
 {
-	public class FluentSecurityGlimpsePlugin : AspNetTab
+	public class FluentSecurityGlimpsePlugin : AspNetTab, ITabLayout
 	{
 		public override object GetData(ITabContext context)
 		{
@@ -51,6 +51,35 @@ namespace FluentSecurity.Glimpse
 			get { return "Fluent Security"; }
 		}
 
+		public object GetLayout()
+		{
+			var infoSectionLayout = StructuredLayout.Create(layout => layout.Row(row =>
+			{
+				row.Cell(1).WidthInPixels(200);
+				row.Cell(2).DisableLimit();
+			}));
+
+			var configSectionLayout = StructuredLayout.Create(layout =>
+				layout.Row(row => row.Cell(1).WidthInPixels(200))
+				);
+
+			var policiesSectionLayout = StructuredLayout.Create(layout => layout.Row(row =>
+			{
+				row.Cell(1).AsCode(CodeType.Csharp);
+				row.Cell(2).AsCode(CodeType.Csharp);
+				row.Cell(3).DisableLimit();
+			}));
+
+			var mainLayout = StructuredLayout.Create(layout =>
+			{
+				layout.Row(row => {});
+				layout.Row(row => row.Cell(2).Layout(infoSectionLayout));
+				layout.Row(row => row.Cell(2).Layout(configSectionLayout));
+				layout.Row(row => row.Cell(2).Layout(policiesSectionLayout));
+			});
+			return mainLayout;
+		}
+
 		private static ISecurityConfiguration GetSecurityConfiguration()
 		{
 			ISecurityConfiguration configuration;
@@ -64,5 +93,10 @@ namespace FluentSecurity.Glimpse
 			}
 			return configuration;
 		}
+	}
+
+	public interface ITabLayout
+	{
+		object GetLayout();
 	}
 }

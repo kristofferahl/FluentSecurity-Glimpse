@@ -22,6 +22,18 @@ namespace FluentSecurity.Glimpse
 				.Column("Loaded assembly")
 				.Column(loadedVersion);
 
+			section.AddRow()
+				.Column("Website")
+				.Column(@"<a href='http://fluentsecurity.net/'>http://fluentsecurity.net</a>").Raw();
+
+			section.AddRow()
+				.Column("Documentation")
+				.Column(@"<a href='http://fluentsecurity.net/wiki'>http://fluentsecurity.net/wiki</a>").Raw();
+
+			section.AddRow()
+				.Column("Twitter")
+				.Column(@"<a href='http://twitter.com/FluentSecurity'>@FluentSecurity</a>").Raw();
+
 			return section;
 		}
 

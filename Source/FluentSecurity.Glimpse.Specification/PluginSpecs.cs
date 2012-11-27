@@ -49,7 +49,7 @@ namespace FluentSecurity.Glimpse.Specification
 
 		It should_have_loaded_version_of_fluent_security = () =>
 		{
-			Section(Sections.FluentSecurity).Columns.ElementAt(0).Data.ShouldEqual("*Fluent Security*");
+			Section(Sections.FluentSecurity).Columns.ElementAt(0).Data.ShouldEqual("*Info*");
 			
 			FluentSecuritySection().Rows.ElementAt(0).Columns.ElementAt(0).Data.ShouldEqual("Key");
 			FluentSecuritySection().Rows.ElementAt(0).Columns.ElementAt(1).Data.ShouldEqual("Value");

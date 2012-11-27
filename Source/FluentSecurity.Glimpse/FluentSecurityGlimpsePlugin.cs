@@ -13,10 +13,12 @@ namespace FluentSecurity.Glimpse
 			if (configuration != null)
 			{
 				// TODO: See below...
-				// * Link to documentation
-				// * Link to NuGet
-				// * Link to website
 				// * Current configuration events (what was the path that led to the current configurtion)
+				//		- Adding policies using "ForAllControllers|ForAllControllersInAssembly(assemblyname)|ForAllControllersInAssemblyContainingType(typename)|..."
+				//		- Created policy container for "*Controller" action "SomeAction"
+				//		- Added policy (instance|lazy) "*Policy" for "*Controller" action "SomeAction"
+				//		- Removed policy "*Policy" for "*Controller" action "SomeAction"
+				//		- Setting cache strategy of policy "*Policy" to "*Lifecyle" for "*Controller" action "SomeAction"
 				// * Request details (what did Fluent Security do during the most recent request)
 				//		- What was the controller and action that was called
 				//		- How many policies was in the container that matched that controller action
@@ -26,7 +28,7 @@ namespace FluentSecurity.Glimpse
 				//		- What was the result of each policy
 				//		- What did Fluent Security do with that result
 				//		- What violation handler was selected
-				//		- How was that violation handler selected
+				//		- How was that violation handler selected (what conventions was used)
 				//		- What was the result of that violation handler
 				//		- How long did it take to execute that violation handler
 				//		- ...
@@ -36,7 +38,7 @@ namespace FluentSecurity.Glimpse
 				var policiesSection = PoliciesSection.Create(configuration);
 
 				var plugin = Plugin.Create("Section", "Content")
-					.Section("Fluent Security", infoSection)
+					.Section("Info", infoSection)
 					.Section("Configuration", configurationSection)
 					.Section("Policies", policiesSection);
 

@@ -55,24 +55,24 @@ namespace FluentSecurity.Glimpse
 
 		public object GetLayout()
 		{
-			var infoSectionLayout = StructuredLayout.Create(layout => layout.Row(row =>
+			var infoSectionLayout = TabLayout.Create(layout => layout.Row(row =>
 			{
 				row.Cell(1).WidthInPixels(200);
 				row.Cell(2).DisableLimit();
 			}));
 
-			var configSectionLayout = StructuredLayout.Create(layout =>
+			var configSectionLayout = TabLayout.Create(layout =>
 				layout.Row(row => row.Cell(1).WidthInPixels(200))
 				);
 
-			var policiesSectionLayout = StructuredLayout.Create(layout => layout.Row(row =>
+			var policiesSectionLayout = TabLayout.Create(layout => layout.Row(row =>
 			{
 				row.Cell(1).AsCode(CodeType.Csharp);
 				row.Cell(2).AsCode(CodeType.Csharp);
 				row.Cell(3).DisableLimit();
 			}));
 
-			var mainLayout = StructuredLayout.Create(layout =>
+			var mainLayout = TabLayout.Create(layout =>
 			{
 				layout.Row(row => {});
 				layout.Row(row => row.Cell(2).Layout(infoSectionLayout));

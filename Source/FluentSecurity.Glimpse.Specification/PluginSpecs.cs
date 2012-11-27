@@ -57,7 +57,7 @@ namespace FluentSecurity.Glimpse.Specification
 
 		private static TabSection FluentSecuritySection()
 		{
-			return Section(Sections.FluentSecurity).Columns.ElementAt(1).Data.ToTabSection();
+			return Section(Sections.FluentSecurity).Columns.ElementAt(1).Data as TabSection;
 		}
 	}
 
@@ -89,7 +89,7 @@ namespace FluentSecurity.Glimpse.Specification
 
 		private static TabSection ConfigurationSection()
 		{
-			return Section(Sections.Configuration).Columns.ElementAt(1).Data.ToTabSection();
+			return Section(Sections.Configuration).Columns.ElementAt(1).Data as TabSection;
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace FluentSecurity.Glimpse.Specification
 
 		private static TabSection PolicySectionData()
 		{
-			return Section(Sections.Policies).Columns.ElementAt(1).Data.ToTabSection();
+			return Section(Sections.Policies).Columns.ElementAt(1).Data as TabSection;
 		}
 	}
 
@@ -163,7 +163,7 @@ namespace FluentSecurity.Glimpse.Specification
 			plugin = new FluentSecurityGlimpsePlugin();
 		}
 
-		protected static IEnumerable<TabRow> Rows
+		protected static IEnumerable<TabSectionRow> Rows
 		{
 			get
 			{
@@ -172,12 +172,12 @@ namespace FluentSecurity.Glimpse.Specification
 			}
 		}
 
-		protected static TabRow MainHeader()
+		protected static TabSectionRow MainHeader()
 		{
 			return Rows.ElementAt(0);
 		}
 
-		protected static TabRow Section(int section)
+		protected static TabSectionRow Section(int section)
 		{
 			return Rows.ElementAt(section);
 		}

@@ -5,7 +5,7 @@ using Glimpse.Core.Plugin.Assist;
 
 namespace FluentSecurity.Glimpse
 {
-	public class FluentSecurityGlimpsePlugin : AspNetTab, ITabLayout
+	public class FluentSecurityGlimpsePlugin : AspNetTab, ITabLayout, IDocumentation
 	{
 		public override object GetData(ITabContext context)
 		{
@@ -94,6 +94,11 @@ namespace FluentSecurity.Glimpse
 				return null;
 			}
 			return configuration;
+		}
+
+		public string DocumentationUri
+		{
+			get { return "http://fluentsecurity.net/wiki"; }
 		}
 	}
 

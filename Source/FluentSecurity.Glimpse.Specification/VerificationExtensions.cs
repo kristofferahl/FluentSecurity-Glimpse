@@ -19,8 +19,8 @@ namespace FluentSecurity.Glimpse.Specification
 				var expectedPolicy = expectedPolicies[index];
 
 				policies.Rows.Any(p =>
-					p.Columns.First().Data.Equals(expectedPolicy.Name.Replace("Policy", String.Empty)) &&
-					p.Columns.Last().Data.Equals(expectedPolicy.FullName)
+					p.Columns.ElementAt(0).Data.Equals(expectedPolicy.Name.Replace("Policy", String.Empty)) &&
+					p.Columns.ElementAt(1).Data.Equals(expectedPolicy.FullName)
 					).ShouldBeTrue();
 			}
 		}

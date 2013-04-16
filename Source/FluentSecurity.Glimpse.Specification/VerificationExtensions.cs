@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Glimpse.Core.Plugin.Assist;
+using Glimpse.Core.Tab.Assist;
 using Machine.Specifications;
 
 namespace FluentSecurity.Glimpse.Specification

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Xml.Linq;
-using Glimpse.Core.Plugin.Assist;
+using Glimpse.Core.Tab.Assist;
 
 namespace FluentSecurity.Glimpse
 {
@@ -41,24 +43,29 @@ namespace FluentSecurity.Glimpse
 		{
 			try
 			{
-				var xml = XDocument.Load("https://raw.github.com/kristofferahl/FluentSecurity/master/Build/Scripts/Build.build");
-				var root = xml.Root;
-				if (root != null)
+				var buildScript = new WebClient().DownloadString("https://raw.github.com/kristofferahl/FluentSecurity/master/build.ps1");
+				if (!String.IsNullOrEmpty(buildScript))
 				{
-					var properties = root.Elements().Where(e => e.Name.LocalName == "property" && e.HasAttributes).ToList();
-					if (properties.Any())
+					var rows = buildScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+					var filteredRows = rows.Where(row => row.Contains("=") && (row.Contains("$version") || row.Contains("$label")));
+					var dictionary = new Dictionary<string, string>();
+					foreach (var filteredRow in filteredRows)
 					{
-						var versionProperty = properties.SingleOrDefault(p => p.FirstAttribute.Value == "project.version.label");
-						if (versionProperty != null)
-						{
-							var versionAttribute = versionProperty.Attribute("value");
-							if (versionAttribute != null)
-								return String.Format("Fluent Security v. {0}", versionAttribute.Value);
-						}
+						var key = filteredRow.Split('=')[0].Trim();
+						var value = filteredRow.Split('=')[1].Trim().Trim('\'');
+						dictionary.Add(key, value);
 					}
+					var version = dictionary["$version"];
+					var label = dictionary["$label"];
+
+					var fullVersion = !String.IsNullOrEmpty(label)
+						? String.Join("-", version, label)
+						: version;
+					return String.Format("FluentSecurity v. {0}.", fullVersion);
 				}
 			}
 			catch { }
+			return null;
 			return "Failed to find available version";
 		} 
 	}

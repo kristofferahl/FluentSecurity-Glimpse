@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
+using FluentSecurity.Configuration;
 using FluentSecurity.Glimpse.SampleApplication.Controllers;
+using FluentSecurity.Policy;
 
 namespace FluentSecurity.Glimpse.SampleApplication
 {
@@ -46,11 +45,73 @@ namespace FluentSecurity.Glimpse.SampleApplication
 			{
 				configuration.GetAuthenticationStatusFrom(() => true);
 
-				configuration.IgnoreMissingConfiguration();
+				configuration.Advanced.IgnoreMissingConfiguration();
 
-				configuration.For<HomeController>(x => x.Index()).RequireRole("One", "Two");
-				configuration.For<HomeController>(x => x.About()).RequireAllRoles("One", "Two");
+				configuration.For<HomeController>(x => x.Index()).DenyAnonymousAccess();
+				configuration.For<HomeController>(x => x.About()).AddPolicy(new FakePolicy()).AddPolicy(new PublishingPolicy());
+
+				configuration.ResolveServicesUsing(t =>
+				{
+					if (t == typeof(IPolicyViolationHandler))
+						return new List<object>
+						{
+							new DefaultPolicyViolationHandler()
+						};
+
+					return new object[0];
+				});
+
+				configuration.Scan(scan =>
+				{
+					scan.AssembliesFromApplicationBaseDirectory();
+					scan.LookForProfiles();
+				});
 			});
+			GlobalFilters.Filters.Add(new HandleSecurityAttribute(), 0);
+		}
+	}
+
+	public class DefaultPolicyViolationHandler : IPolicyViolationHandler
+	{
+		public ActionResult Handle(PolicyViolationException exception)
+		{
+			return new ViewResult
+			{
+				ViewName = "~/Views/Home/Index.cshtml"
+			};
+		}
+	}
+
+	public class FakePolicy : ISecurityPolicy
+	{
+		public PolicyResult Enforce(ISecurityContext context)
+		{
+			return PolicyResult.CreateSuccessResult(this);
+		}
+	}
+
+	public class PublishingPolicy : ISecurityPolicy
+	{
+		public PolicyResult Enforce(ISecurityContext context)
+		{
+			Diagnostics.Publish.RuntimePolicyEvent(() => "Publishing event from custom policy", context);
+			return PolicyResult.CreateFailureResult(this, "Ah ah ah...");
+		}
+	}
+
+	public class TestProfile1 : SecurityProfile
+	{
+		public override void Configure()
+		{
+
+		}
+	}
+
+	public class TestProfile2 : SecurityProfile
+	{
+		public override void Configure()
+		{
+
 		}
 	}
 }

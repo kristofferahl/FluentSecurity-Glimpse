@@ -1,5 +1,3 @@
-using System.Web;
-using Glimpse.Core;
 using Glimpse.Core.Extensibility;
 
 namespace FluentSecurity.Glimpse.SampleApplication
@@ -8,7 +6,7 @@ namespace FluentSecurity.Glimpse.SampleApplication
 	{
 		public RuntimePolicy Execute(IRuntimePolicyContext policyContext)
 		{
-			var context = policyContext.GetRequestContext<HttpContextBase>();
+			//var context = policyContext.GetRequestContext<HttpContextBase>();
 
 			//You can perform a check like the one below to control Glimpse's permissions within your application.
 			//if (!context.User.IsInRole("Administrator")) 

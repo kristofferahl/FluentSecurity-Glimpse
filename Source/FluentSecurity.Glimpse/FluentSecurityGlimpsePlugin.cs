@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentSecurity.Diagnostics.Events;
 using Glimpse.AspNet.Extensibility;
 using Glimpse.Core.Extensibility;
-using Glimpse.Core.Plugin.Assist;
+using Glimpse.Core.Tab.Assist;
 
 namespace FluentSecurity.Glimpse
 {
 	public class FluentSecurityGlimpsePlugin : AspNetTab, ITabLayout, IDocumentation
 	{
+		public static List<ISecurityEvent> ConfigurationEvents = new List<ISecurityEvent>();
+		public static Queue<ISecurityEvent> RuntimeEvents = new Queue<ISecurityEvent>();
+
 		public override object GetData(ITabContext context)
 		{
 			var configuration = GetSecurityConfiguration();
@@ -15,32 +21,25 @@ namespace FluentSecurity.Glimpse
 				// TODO: See below...
 				// * Current configuration events (what was the path that led to the current configurtion)
 				//		- Adding policies using "ForAllControllers|ForAllControllersInAssembly(assemblyname)|ForAllControllersInAssemblyContainingType(typename)|..."
-				//		- Created policy container for "*Controller" action "SomeAction"
-				//		- Added policy (instance|lazy) "*Policy" for "*Controller" action "SomeAction"
-				//		- Removed policy "*Policy" for "*Controller" action "SomeAction"
 				//		- Setting cache strategy of policy "*Policy" to "*Lifecyle" for "*Controller" action "SomeAction"
 				// * Request details (what did Fluent Security do during the most recent request)
-				//		- What was the controller and action that was called
-				//		- How many policies was in the container that matched that controller action
-				//		- How many policies executed
-				//		- Which policies executed
-				//		- How long did it take to execute them
-				//		- What was the result of each policy
-				//		- What did Fluent Security do with that result
-				//		- What violation handler was selected
-				//		- How was that violation handler selected (what conventions was used)
-				//		- What was the result of that violation handler
+				//		- What was the result of a violation handler
 				//		- How long did it take to execute that violation handler
-				//		- ...
 
 				var infoSection = InfoSection.Create(configuration);
-				var configurationSection = ConfigurationSection.Create(configuration);
+				var configurationSection = ConfigurationSection.Create(configuration, ConfigurationEvents);
 				var policiesSection = PoliciesSection.Create(configuration);
 
 				var plugin = Plugin.Create("Section", "Content")
 					.Section("Info", infoSection)
 					.Section("Configuration", configurationSection)
 					.Section("Policies", policiesSection);
+
+				if (RuntimeEvents.Any())
+				{
+					var runtimeEventsSection = EventsSection.BuildAndDequeueEvents(RuntimeEvents);
+					plugin.Section("Events", runtimeEventsSection);
+				}
 
 				return plugin;
 			}
@@ -50,36 +49,17 @@ namespace FluentSecurity.Glimpse
 
 		public override string Name
 		{
-			get { return "Fluent Security"; }
+			get { return "FluentSecurity"; }
 		}
 
 		public object GetLayout()
 		{
-			var infoSectionLayout = TabLayout.Create(layout => layout.Row(row =>
+			var mainLayout = TabLayout.Create(layout => layout.Row(row =>
 			{
-				row.Cell(1).WidthInPixels(200);
-				row.Cell(2).DisableLimit();
+				row.Cell(0).AsKey().WidthInPixels(100);
+				row.Cell(1);
 			}));
-
-			var configSectionLayout = TabLayout.Create(layout =>
-				layout.Row(row => row.Cell(1).WidthInPixels(200))
-				);
-
-			var policiesSectionLayout = TabLayout.Create(layout => layout.Row(row =>
-			{
-				row.Cell(1).AsCode(CodeType.Csharp);
-				row.Cell(2).AsCode(CodeType.Csharp);
-				row.Cell(3).DisableLimit();
-			}));
-
-			var mainLayout = TabLayout.Create(layout =>
-			{
-				layout.Row(row => {});
-				layout.Row(row => row.Cell(2).Layout(infoSectionLayout));
-				layout.Row(row => row.Cell(2).Layout(configSectionLayout));
-				layout.Row(row => row.Cell(2).Layout(policiesSectionLayout));
-			});
-			return mainLayout;
+			return mainLayout.Build();
 		}
 
 		private static ISecurityConfiguration GetSecurityConfiguration()
@@ -100,10 +80,5 @@ namespace FluentSecurity.Glimpse
 		{
 			get { return "http://fluentsecurity.net/wiki"; }
 		}
-	}
-
-	public interface ITabLayout
-	{
-		object GetLayout();
 	}
 }

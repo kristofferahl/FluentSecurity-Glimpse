@@ -4,7 +4,7 @@ using FluentSecurity.Glimpse.Specification.Controllers;
 using FluentSecurity.Glimpse.Specification.Policies;
 using FluentSecurity.Policy;
 using Glimpse.Core.Extensibility;
-using Glimpse.Core.Plugin.Assist;
+using Glimpse.Core.Tab.Assist;
 using Machine.Specifications;
 
 namespace FluentSecurity.Glimpse.Specification
@@ -21,7 +21,7 @@ namespace FluentSecurity.Glimpse.Specification
 		   result = plugin.Name;
 
 		It should_be_Fluent_Security = () =>
-		  result.ShouldEqual("Fluent Security");
+		  result.ShouldEqual("FluentSecurity");
 	}
 
 	public class When_getting_data_before_configuring_fluent_security : ConfigurationSpec
@@ -84,7 +84,7 @@ namespace FluentSecurity.Glimpse.Specification
 		It should_have_service_locator_info = () =>
 		{
 			ConfigurationSection().Rows.ElementAt(2).Columns.ElementAt(0).Data.ShouldEqual("Service locator");
-			ConfigurationSection().Rows.ElementAt(2).Columns.ElementAt(1).Data.ShouldEqual("Service locator has been configued");
+			ConfigurationSection().Rows.ElementAt(2).Columns.ElementAt(1).Data.ShouldEqual("Service locator has been configured");
 		};
 
 		private static TabSection ConfigurationSection()
@@ -149,7 +149,7 @@ namespace FluentSecurity.Glimpse.Specification
 			{
 				configuration.GetAuthenticationStatusFrom(() => true);
 
-				configuration.IgnoreMissingConfiguration();
+				configuration.Advanced.IgnoreMissingConfiguration();
 				
 				configuration.ResolveServicesUsing(t => new List<object>());
 

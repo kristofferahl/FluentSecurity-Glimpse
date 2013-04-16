@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentSecurity.Policy;
 using Glimpse.Core.Tab.Assist;
 
 namespace FluentSecurity.Glimpse
@@ -33,7 +34,8 @@ namespace FluentSecurity.Glimpse
 			{
 				policyRows.AddRow()
 					.Column(securityPolicy.Name.Replace("Policy", String.Empty))
-					.Column(securityPolicy.FullName);
+					.Column(securityPolicy.FullName)
+					.WarnIf(securityPolicy == typeof(IgnorePolicy));
 			}
 		} 
 	}

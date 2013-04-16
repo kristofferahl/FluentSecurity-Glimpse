@@ -48,7 +48,7 @@ namespace FluentSecurity.Glimpse.SampleApplication
 				configuration.Advanced.IgnoreMissingConfiguration();
 
 				configuration.For<HomeController>(x => x.Index()).DenyAnonymousAccess();
-				configuration.For<HomeController>(x => x.About()).AddPolicy(new FakePolicy()).AddPolicy(new PublishingPolicy());
+				configuration.For<HomeController>(x => x.About()).AddPolicy(new FakePolicy()).AddPolicy<PublishingPolicy>();
 
 				configuration.ResolveServicesUsing(t =>
 				{

@@ -17,7 +17,7 @@ namespace FluentSecurity.Glimpse
 			{
 				var policySectionData = new TabSection("Policy", "Type");
 
-				var securityPolicies = policyContainer.GetPolicies().OrderBy(x => x.GetType().FullName).Select(x => x.GetType());
+				var securityPolicies = policyContainer.GetPolicies().OrderBy(x => x.GetType().FullName).Select(x => x.GetPolicyType());
 				AddPoliciesToPolicySection(policySectionData, securityPolicies);
 
 				section.AddRow()

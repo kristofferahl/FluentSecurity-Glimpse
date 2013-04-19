@@ -30,16 +30,25 @@ namespace FluentSecurity.Glimpse
 				var configurationSection = ConfigurationSection.Create(configuration, ConfigurationEvents);
 				var policiesSection = PoliciesSection.Create(configuration);
 
-				var plugin = Plugin.Create("Section", "Content")
-					.Section("Info", infoSection)
-					.Section("Configuration", configurationSection)
-					.Section("Policies", policiesSection);
+				//var plugin = Plugin.Create("Section", "Content")
+				//	.Section("Info", infoSection)
+				//	.Section("Configuration", configurationSection)
+				//	.Section("Policies", policiesSection);
 
+				TabSection runtimeEventsSection = null;
 				if (RuntimeEvents.Any())
 				{
-					var runtimeEventsSection = EventsSection.BuildAndDequeueEvents(RuntimeEvents);
-					plugin.Section("Events", runtimeEventsSection);
+					runtimeEventsSection = EventsSection.BuildAndDequeueEvents(RuntimeEvents);
+					//plugin.Section("Events", runtimeEventsSection);
 				}
+
+				var plugin = new
+				{
+					Info = infoSection.Build(),
+					Configuration = configurationSection.Build(),
+					Policies = policiesSection.Build(),
+					Events = runtimeEventsSection != null ? runtimeEventsSection.Build() : null
+				};
 
 				return plugin;
 			}
@@ -54,12 +63,44 @@ namespace FluentSecurity.Glimpse
 
 		public object GetLayout()
 		{
-			var mainLayout = TabLayout.Create(layout => layout.Row(row =>
+			return new
 			{
-				row.Cell(0).AsKey().WidthInPixels(100);
-				row.Cell(1);
-			}));
-			return mainLayout.Build();
+				Info = new
+				{
+					Layout = new []
+					{
+						new object[]
+						{
+							new { Data = 0, Key = true, Width = "230px" },
+							new { Data = 1 }
+						}
+					}
+				},
+				Configuration = new
+				{
+					Layout = new[]
+					{
+						new object[]
+						{
+							new { Data = 0, Key = true, Width = "230px" },
+							new { Data = 1, ForceFull = true }
+						}
+					}
+				},
+				Events = new
+				{
+					Layout = new[]
+					{
+						new object[]
+						{
+							new { Data = 0, Width = "50px" },
+							new { Data = 1, Width = "220px" },
+							new { Data = 2, ForceFull = true },
+							new { Data = 3, Width = "100px", ForceFull = true }
+						}
+					}
+				}
+			};
 		}
 
 		private static ISecurityConfiguration GetSecurityConfiguration()

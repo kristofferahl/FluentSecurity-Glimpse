@@ -11,8 +11,12 @@ namespace FluentSecurity.Glimpse
 		{
 			var section = CreateTabSection();
 
+			var order = 0;
 			foreach (var securityEvent in events)
-				AddRowForEvent(securityEvent, section);
+			{
+				AddRowForEvent(order, securityEvent, section);
+				order++;
+			}
 
 			return section;
 		}
@@ -21,10 +25,12 @@ namespace FluentSecurity.Glimpse
 		{
 			var section = CreateTabSection();
 
+			var order = 0;
 			while (queue.Any())
 			{
 				var securityEvent = queue.Dequeue();
-				AddRowForEvent(securityEvent, section);
+				AddRowForEvent(order, securityEvent, section);
+				order++;
 			}
 
 			return section;
@@ -32,16 +38,17 @@ namespace FluentSecurity.Glimpse
 
 		private static TabSection CreateTabSection()
 		{
-			return new TabSection("Correlation Id", "Message", "Completed in");
+			return new TabSection("Order", "Correlation Id", "Message", "Completed in");
 		}
 
-		private static void AddRowForEvent(ISecurityEvent @event, TabSection section)
+		private static void AddRowForEvent(int order, ISecurityEvent @event, TabSection section)
 		{
 			var milliseconds = @event.CompletedInMilliseconds.HasValue
-				? (@event.CompletedInMilliseconds.Value.ToString("0.00") + " ms").Replace(",", ".")
+				? (@event.CompletedInMilliseconds.Value.ToString("0") + " ms").Replace(",", ".")
 				: null;
 
 			section.AddRow()
+				.Column(order)
 				.Column(@event.CorrelationId)
 				.Column(@event.Message)
 				.Column(milliseconds)

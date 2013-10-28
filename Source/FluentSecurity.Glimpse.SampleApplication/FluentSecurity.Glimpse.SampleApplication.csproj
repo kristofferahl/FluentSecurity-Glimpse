@@ -37,8 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentSecurity, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\FluentSecurity.2.0.0-beta1\lib\net40\FluentSecurity.dll</HintPath>
+      <HintPath>..\packages\FluentSecurity.2.0.0\lib\net40\FluentSecurity.dll</HintPath>
     </Reference>
     <Reference Include="Glimpse.AspNet, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

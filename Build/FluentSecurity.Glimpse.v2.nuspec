@@ -12,12 +12,12 @@
     <description>Glimpse plugin for Fluent Security.</description>
     <tags>asp.net mvc .net40 security debugging diagnostics</tags>
     <dependencies>
-      <dependency id="FluentSecurity" version="2.0" />
-      <dependency id="Glimpse" version="1.0" />
-      <dependency id="Glimpse.AspNet" version="1.0" />
+      <dependency id="FluentSecurity" version="[2,3)" />
+      <dependency id="Glimpse" version="[1,2)" />
+      <dependency id="Glimpse.AspNet" version="[1,2)" />
     </dependencies>
   </metadata>
   <files>
-    <file src="FluentSecurity.Glimpse.dll" target="lib\FluentSecurity.Glimpse.dll" />
+    <file src="Output\FluentSecurity.Glimpse.dll" target="lib\net40\FluentSecurity.Glimpse.dll" />
   </files>
 </package>

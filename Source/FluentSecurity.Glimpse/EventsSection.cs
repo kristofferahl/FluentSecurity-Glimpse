@@ -42,7 +42,7 @@ namespace FluentSecurity.Glimpse
 				: null;
 
 			section.AddRow()
-				.Column(@event.CorrelationId)
+				.Column(@event.CorrelationId.ToString().Substring(0,15))
 				.Column(@event.Message)
 				.Column(milliseconds)
 				.WarnIf(@event.CompletedInMilliseconds > 10);

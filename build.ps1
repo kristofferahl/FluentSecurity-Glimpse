@@ -92,6 +92,7 @@ task Test -depends Compile {
 task Pack -depends Test {
 	copy-item "$sourceDir\$product\bin\$configuration" -destination "$artifactsDir\bin" -recurse
 	copy-item "$rootDir\Readme.md" -destination "$artifactsDir\Readme.md" -recurse
+	copy-item "$rootDir\License.txt" -destination "$artifactsDir\License.txt" -recurse
 
 	get-content "$buildDir\NuGet\$product.nuspec" | % { $_ -replace "@CURRENT-VERSION@", $buildLabel -replace "@ARTIFACT-PATH@", (resolve-path $artifactsDir) } | set-content "$artifactsDir\$product.$buildLabel.nuspec"
 	exec {

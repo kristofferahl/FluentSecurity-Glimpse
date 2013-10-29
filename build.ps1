@@ -10,10 +10,12 @@ properties {
 	$rootDir		= '.'
 	$sourceDir		= "$rootDir\Source"
 	$buildDir		= "$rootDir\Build"
-	$artifactsDir	= "$buildDir\Artifacts\$artifactsName"
+	$artifactsDir	= "$buildDir\Artifacts"
 	$deploymentDir	= ''
 
 	$buildNumber	= $null
+
+	$copyright		= 'Copyright (c) 2009-2013, Kristoffer Ahl'
 
 	$setupMessage	= 'Executed Setup!'
 	$cleanMessage	= 'Executed Clean!'
@@ -59,6 +61,16 @@ task Run {
 
 task Setup {
 	nuget_exe install "$sourceDir\.nuget\packages.config" -outputdirectory "$sourceDir\packages"
+	generate_assemblyinfo `
+		-file "$sourceDir\SharedAssemblyInfo.cs" `
+		-description "$product ($configuration)" `
+		-company $company `
+		-product $product `
+		-version $version `
+		-buildVersion $buildVersion `
+		-buildLabel $buildLabel `
+		-clsCompliant "false" `
+		-copyright $copyright
 	$setupMessage
 }
 
@@ -90,6 +102,44 @@ task ? -Description "Help" {
 	Write-Documentation
 }
 
-taskSetup {
-	$script:buildVersion = ?: {$buildNumber -ne $null} {"$version.$buildNumber"} {$version}
+#------------------------------------------------------------
+# Reusable functions
+#------------------------------------------------------------
+
+function generate_assemblyinfo {
+	param(
+		[string]$clsCompliant = "true",
+		[string]$description, 
+		[string]$company, 
+		[string]$product, 
+		[string]$copyright, 
+		[string]$version,
+		[string]$buildVersion,
+		[string]$buildLabel,
+		[string]$file = $(throw "file is a required parameter.")
+	)
+	
+	$asmInfo = "using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+
+[assembly: CLSCompliantAttribute($clsCompliant)]
+[assembly: ComVisibleAttribute(false)]
+[assembly: AssemblyDescriptionAttribute(""$description"")]
+[assembly: AssemblyCompanyAttribute(""$company"")]
+[assembly: AssemblyProductAttribute(""$product"")]
+[assembly: AssemblyCopyrightAttribute(""$copyright"")]
+[assembly: AssemblyVersionAttribute(""$version"")]
+[assembly: AssemblyInformationalVersionAttribute(""$buildLabel"")]
+[assembly: AssemblyFileVersionAttribute(""$buildVersion"")]"
+
+	$dir = [System.IO.Path]::GetDirectoryName($file)
+	if ([System.IO.Directory]::Exists($dir) -eq $false)
+	{
+		Write-Host "Creating directory $dir"
+		[System.IO.Directory]::CreateDirectory($dir)
+	}
+	
+	Write-Host "Generating assembly info file: $file"
+	out-file -filePath $file -encoding UTF8 -inputObject $asmInfo
 }

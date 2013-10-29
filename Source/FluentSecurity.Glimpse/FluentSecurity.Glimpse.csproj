@@ -55,13 +55,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="ConfigurationSection.cs" />
     <Compile Include="EventsSection.cs" />
     <Compile Include="FluentSecurityGlimpseEventListener.cs" />
     <Compile Include="FluentSecurityGlimpsePlugin.cs" />
     <Compile Include="InfoSection.cs" />
     <Compile Include="PoliciesSection.cs" />
-    <Compile Include="Properties\CommonAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

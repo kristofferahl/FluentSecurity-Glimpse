@@ -86,6 +86,10 @@ task Compile -depends Setup, Clean {
 }
 
 task Test -depends Compile {
+	$mspec = find_down mspec-clr4.exe (resolve-path .) -file
+	exec {
+		invoke-expression "$mspec $sourceDir/$product.Specification/bin/$configuration/$product.Specification.dll"
+	}
 	$testMessage
 }
 

@@ -3,7 +3,7 @@
 A Glimpse plugin for FluentSecurity. Gives you a glimpse of what your current security configuration looks like.
 
 ## Websites
-<http://www.fluentsecurity.net/>
+<http://www.fluentsecurity.net/>   
 <http://getglimpse.com/>
 
 ## Source code

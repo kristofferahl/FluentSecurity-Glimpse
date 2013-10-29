@@ -58,6 +58,7 @@ task Run {
 }
 
 task Setup {
+	nuget_exe install "$sourceDir\.nuget\packages.config" -outputdirectory "$sourceDir\packages"
 	$setupMessage
 }
 

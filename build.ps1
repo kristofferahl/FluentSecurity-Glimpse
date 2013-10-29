@@ -90,7 +90,7 @@ task Test -depends Compile {
 }
 
 task Pack -depends Test {
-	pack_solution "$sourceDir\$product.sln" $artifactsDir $artifactsName
+	copy-item "$sourceDir\$product\bin\$configuration" -destination "$artifactsDir\$artifactsName" -recurse
 	$packMessage
 }
 

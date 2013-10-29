@@ -1,3 +1,4 @@
+Build/Artifacts
 Packages/
 !Packages/repositories.config
 SharedAssemblyInfo.cs

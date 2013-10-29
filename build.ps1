@@ -14,6 +14,7 @@ properties {
 	$deploymentDir	= ''
 
 	$buildNumber	= $null
+	$branch			= $null
 
 	$copyright		= 'Copyright (c) 2009-2013, Kristoffer Ahl'
 

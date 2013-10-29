@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>FluentSecurity.Glimpse</id>
-    <version>2.0</version>
+    <version>@CURRENT-VERSION@</version>
     <authors>Kristoffer Ahl</authors>
     <owners>Kristoffer Ahl</owners>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
@@ -18,6 +18,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="Output\FluentSecurity.Glimpse.dll" target="lib\net40\FluentSecurity.Glimpse.dll" />
+    <file src="@ARTIFACT-PATH@\bin\FluentSecurity.Glimpse.dll" target="lib\net40\FluentSecurity.Glimpse.dll" />
+    <file src="@ARTIFACT-PATH@\**\*.txt" />
+    <file src="@ARTIFACT-PATH@\**\*.md" />
   </files>
 </package>

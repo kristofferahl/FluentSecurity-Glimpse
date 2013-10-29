@@ -10,7 +10,7 @@ properties {
 	$rootDir		= '.'
 	$sourceDir		= "$rootDir\Source"
 	$buildDir		= "$rootDir\Build"
-	$artifactsDir	= "$buildDir\Artifacts"
+	$artifactsDir	= "$buildDir\Artifacts\$artifactsName"
 	$deploymentDir	= ''
 
 	$buildNumber	= $null
@@ -90,7 +90,12 @@ task Test -depends Compile {
 }
 
 task Pack -depends Test {
-	copy-item "$sourceDir\$product\bin\$configuration" -destination "$artifactsDir\$artifactsName" -recurse
+	copy-item "$sourceDir\$product\bin\$configuration" -destination "$artifactsDir\bin" -recurse
+
+	get-content "$buildDir\NuGet\$product.nuspec" | % { $_ -replace "@CURRENT-VERSION@", $buildLabel -replace "@ARTIFACT-PATH@", (resolve-path $artifactsDir) } | set-content "$artifactsDir\$product.$buildLabel.nuspec"
+	exec {
+		nuget_exe pack "$artifactsDir\$product.$buildLabel.nuspec" -OutputDirectory "$artifactsDir"
+	}
 	$packMessage
 }
 

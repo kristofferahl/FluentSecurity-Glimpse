@@ -15,6 +15,9 @@ properties {
 
 	$buildNumber	= $null
 	$branch			= $null
+	
+	$mygetApiKey = $null
+	$nugetApiKey = $null
 
 	$copyright		= 'Copyright (c) 2009-2013, Kristoffer Ahl'
 
@@ -107,6 +110,28 @@ task Pack -depends Test {
 }
 
 task Deploy -depends Pack {
+	$localFeedDir = "C:\Develop\LocalNugetFeed"
+	if (test-path $localFeedDir) {
+		copy_files $artifactsDir $localFeedDir "*.nupkg"
+	}
+	
+	$isNightlyBuild = (((get-date) -gt "02:55") -and ((get-date) -lt "03:55"))
+	if ($branch -eq 'develop' -and $mygetApiKey -ne $null -and $isNightlyBuild) {
+		$feed = 'https://www.myget.org/F/fluentsecurity/api/v2/package'
+		$apiKey = $mygetApiKey
+	}
+	
+	if ($branch -eq 'master' -and $nugetApiKey -ne $null) {
+		$feed = 'https://nuget.org/'
+		$apiKey = $nugetApiKey
+	}
+	
+	if ($feed -ne $null -and $apiKey -ne $null) {
+		get-childitem -path $artifactsDir -filter "*.nupkg" | % {
+			write-host "Pushing nuget package $_ to $feed" -fore cyan
+			nuget_exe push $_.FullName -apikey $apiKey -source $feed
+		}
+	}
 	$deployMessage
 }
 

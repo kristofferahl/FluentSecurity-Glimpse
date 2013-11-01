@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Xml.Linq;
 using Glimpse.Core.Tab.Assist;
 
 namespace FluentSecurity.Glimpse
@@ -66,7 +65,6 @@ namespace FluentSecurity.Glimpse
 			}
 			catch { }
 			return null;
-			return "Failed to find available version";
 		} 
 	}
 }
